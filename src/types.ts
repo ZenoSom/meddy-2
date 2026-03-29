@@ -14,6 +14,12 @@ export interface Patient {
   name: string;
   age: number;
   gender: string;
+  vitals: {
+    temp: number;
+    bp: string;
+    o2: number;
+    hr?: number;
+  };
   history: VitalsEntry[];
   symptoms: {
     text: string;
@@ -29,14 +35,16 @@ export interface Patient {
     familyHistory: string;
   };
   notes: string;
-  prescriptionUrl?: string;
+  prescriptionUrl?: string; // Legacy
   priorityScore: number;
   priorityLevel: PriorityLevel;
   trend: 'up' | 'down' | 'stable';
   aiAnalysis: {
     predictedDisease: string;
+    riskLevel: PriorityLevel;
     explanation: string;
     futureRisks: string[];
+    prescription: string;
     suggestedDoctorType: Specialist;
   };
   createdAt: string;

@@ -18,10 +18,149 @@ const INITIAL_DOCTORS: Doctor[] = [
   { id: 'd5', name: "Dr. Emily Brown", specialist: "General Physician", schedule: { day: "Monday", date: "2026-03-30", slots: ["09:00", "09:30", "10:00", "10:30", "11:00"] } },
 ];
 
+const MOCK_PATIENTS: Patient[] = [
+  {
+    id: 'p1',
+    name: "Aarav Sharma",
+    age: 62,
+    gender: "Male",
+    vitals: { temp: 98.6, bp: "185/115", o2: 89, hr: 110 },
+    symptoms: { text: "Severe crushing chest pain radiating to left arm, sweating, shortness of breath", painArea: "Chest", painLevel: 9, duration: "30 mins" },
+    risks: { diabetes: true, highBP: true, heartHistory: true, habits: "Smoker", familyHistory: "Father had MI at 55" },
+    notes: "Patient appears extremely pale and diaphoretic. Emergency protocol initiated.",
+    priorityLevel: "Critical",
+    priorityScore: 95,
+    trend: 'down',
+    history: [
+      { time: "10:05", temp: 98.6, bp: "170/105", o2: 92, hr: 105 },
+      { time: "10:20", temp: 98.6, bp: "185/115", o2: 89, hr: 110 }
+    ],
+    aiAnalysis: {
+      predictedDisease: "Acute Myocardial Infarction (Heart Attack)",
+      riskLevel: "Critical",
+      explanation: "Patient presents with classic MI symptoms including high-grade hypertension and hypoxia. Immediate cardiac intervention required.",
+      futureRisks: ["Heart Failure", "Arrhythmia", "Cardiac Arrest"],
+      prescription: "Administer Aspirin 325mg immediately. Start high-flow oxygen. Prepare for emergency angioplasty.",
+      suggestedDoctorType: "Cardiologist"
+    },
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'p2',
+    name: "Sarah Jenkins",
+    age: 24,
+    gender: "Female",
+    vitals: { temp: 103.2, bp: "110/70", o2: 98, hr: 95 },
+    symptoms: { text: "Persistent high fever, stiff neck, and extreme sensitivity to light.", painArea: "Head/Neck", painLevel: 8, duration: "12 hours" },
+    risks: { diabetes: false, highBP: false, heartHistory: false, habits: "None", familyHistory: "None" },
+    notes: "Patient is disoriented. Possible meningitis.",
+    priorityLevel: "Urgent",
+    priorityScore: 78,
+    trend: 'down',
+    history: [
+      { time: "09:45", temp: 102.5, bp: "115/75", o2: 98, hr: 90 },
+      { time: "10:15", temp: 103.2, bp: "110/70", o2: 98, hr: 95 }
+    ],
+    aiAnalysis: {
+      predictedDisease: "Bacterial Meningitis Suspected",
+      riskLevel: "Urgent",
+      explanation: "High fever combined with nuchal rigidity and photophobia is highly indicative of meningitis. Requires urgent lumbar puncture.",
+      futureRisks: ["Neurological Damage", "Sepsis", "Hearing Loss"],
+      prescription: "Isolation protocol. IV Antibiotics (Ceftriaxone). Fluid resuscitation. Immediate neuro evaluation.",
+      suggestedDoctorType: "Neurologist"
+    },
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'p3',
+    name: "David Miller",
+    age: 42,
+    gender: "Male",
+    vitals: { temp: 98.4, bp: "128/82", o2: 99, hr: 72 },
+    symptoms: { text: "Obvious deformity in right forearm after fall from ladder.", painArea: "Right Arm", painLevel: 7, duration: "1 hour" },
+    risks: { diabetes: false, highBP: false, heartHistory: false, habits: "None", familyHistory: "None" },
+    notes: "Clean fracture suspected. Neurovascular status intact.",
+    priorityLevel: "Normal",
+    priorityScore: 45,
+    trend: 'stable',
+    history: [
+      { time: "10:10", temp: 98.4, bp: "128/82", o2: 99, hr: 72 }
+    ],
+    aiAnalysis: {
+      predictedDisease: "Radius/Ulna Fracture",
+      riskLevel: "Normal",
+      explanation: "Isolated orthopedic trauma. No immediate life threat but requires immobilization and X-ray.",
+      futureRisks: ["Non-union", "Nerve Compression"],
+      prescription: "Immobilize with splint. Pain management (Ibuprofen/Acetaminophen). Orthopedic consult for possible casting.",
+      suggestedDoctorType: "Orthopedic"
+    },
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'p4',
+    name: "Mohammad Khan",
+    age: 55,
+    gender: "Male",
+    vitals: { temp: 99.2, bp: "145/95", o2: 85, hr: 102 },
+    symptoms: { text: "Severe shortness of breath, wheezing, unable to speak in full sentences.", painArea: "Chest/Lungs", painLevel: 6, duration: "2 hours" },
+    risks: { diabetes: false, highBP: true, heartHistory: false, habits: "Heavy Smoker", familyHistory: "None" },
+    notes: "History of COPD. Acute exacerbation suspected.",
+    priorityLevel: "Critical",
+    priorityScore: 92,
+    trend: 'down',
+    history: [
+      { time: "09:30", temp: 98.8, bp: "140/90", o2: 88, hr: 95 },
+      { time: "10:30", temp: 99.2, bp: "145/95", o2: 85, hr: 102 }
+    ],
+    aiAnalysis: {
+      predictedDisease: "COPD Exacerbation",
+      riskLevel: "Critical",
+      explanation: "Critically low oxygen levels and severe respiratory distress in a known heavy smoker.",
+      futureRisks: ["Respiratory Failure", "Pneumonia"],
+      prescription: "Nebulized bronchodilators. IV Corticosteroids. Supplemental oxygen (Venturi mask). Consider BiPAP.",
+      suggestedDoctorType: "Pulmonologist"
+    },
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'p5',
+    name: "Elena Petrova",
+    age: 36,
+    gender: "Female",
+    vitals: { temp: 98.6, bp: "120/80", o2: 99, hr: 78 },
+    symptoms: { text: "Minor deep cut on the hand while cooking. Bleeding is controlled.", painArea: "Hand", painLevel: 4, duration: "15 mins" },
+    risks: { diabetes: false, highBP: false, heartHistory: false, habits: "None", familyHistory: "None" },
+    notes: "Requires suturing.",
+    priorityLevel: "Normal",
+    priorityScore: 25,
+    trend: 'stable',
+    history: [
+      { time: "10:35", temp: 98.6, bp: "120/80", o2: 99, hr: 78 }
+    ],
+    aiAnalysis: {
+      predictedDisease: "Laceration",
+      riskLevel: "Normal",
+      explanation: "Surface injury, vitals stable, no systemic threat.",
+      futureRisks: ["Infection", "Scarring"],
+      prescription: "Local anesthesia. Primary closure with sutures. Tetanus prophylaxis. Antibiotic ointment.",
+      suggestedDoctorType: "General Physician"
+    },
+    createdAt: new Date().toISOString()
+  }
+];
+
+const MOCK_APPOINTMENTS: Appointment[] = [
+  { id: 'a1', patientId: 'p1', doctorId: 'd1', slot: { day: 'Monday', date: '2026-03-30', time: '09:00' }, rankInQueue: 1, createdAt: new Date().toISOString() },
+  { id: 'a2', patientId: 'p4', doctorId: 'd2', slot: { day: 'Monday', date: '2026-03-30', time: '09:00' }, rankInQueue: 1, createdAt: new Date().toISOString() },
+  { id: 'a3', patientId: 'p2', doctorId: 'd3', slot: { day: 'Monday', date: '2026-03-30', time: '09:00' }, rankInQueue: 1, createdAt: new Date().toISOString() },
+  { id: 'a4', patientId: 'p3', doctorId: 'd4', slot: { day: 'Monday', date: '2026-03-30', time: '09:00' }, rankInQueue: 1, createdAt: new Date().toISOString() },
+  { id: 'a5', patientId: 'p5', doctorId: 'd5', slot: { day: 'Monday', date: '2026-03-30', time: '09:00' }, rankInQueue: 1, createdAt: new Date().toISOString() }
+];
+
 export default function App() {
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
   const [doctors] = useState<Doctor[]>(INITIAL_DOCTORS);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
   const [loading, setLoading] = useState(true);
   const [currentAnalysis, setCurrentAnalysis] = useState<AIAnalysis | null>(null);
   const [currentPatientName, setCurrentPatientName] = useState('');
@@ -37,31 +176,25 @@ export default function App() {
     const savedPatients = localStorage.getItem('meddy_patients');
     const savedAppointments = localStorage.getItem('meddy_appointments');
     
-    if (savedPatients) {
+    if (savedPatients && savedPatients !== "[]") {
       try {
         const parsed = JSON.parse(savedPatients);
-        if (Array.isArray(parsed)) {
-          const parsedPatients = parsed.map((p: any) => {
-            // Migration from old schema to new schema
-            if (!p.history && p.vitals) {
-              p.history = [{
-                time: p.createdAt ? new Date(p.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "00:00",
-                temp: p.vitals.temp,
-                bp: p.vitals.bp,
-                o2: p.vitals.o2,
-                hr: p.vitals.hr
-              }];
-            }
-            if (!p.trend) p.trend = 'stable';
-            return p;
-          });
-          setPatients(parsedPatients);
-        } else {
-          setPatients([]);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPatients(parsed);
         }
       } catch (e) {
         console.error("Failed to parse patients", e);
-        setPatients([]);
+      }
+    }
+
+    if (savedAppointments && savedAppointments !== "[]") {
+      try {
+        const parsed = JSON.parse(savedAppointments);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAppointments(parsed);
+        }
+      } catch (e) {
+        console.error("Failed to parse appointments", e);
       }
     }
     
