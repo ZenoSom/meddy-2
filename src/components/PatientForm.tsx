@@ -96,6 +96,12 @@ export default function PatientForm({ patients, onPatientAdded, onAnalysisComple
         name: data.name,
         age: parseInt(data.age) || 0,
         gender: data.gender,
+        vitals: {
+          temp: parseFloat(data.vitals.temp) || 0,
+          bp: data.vitals.bp,
+          o2: parseInt(data.vitals.o2) || 0,
+          hr: data.vitals.hr ? parseInt(data.vitals.hr) : undefined
+        },
         history: newHistory,
         symptoms: data.symptoms,
         risks: data.risks,
@@ -105,8 +111,10 @@ export default function PatientForm({ patients, onPatientAdded, onAnalysisComple
         trend: trend,
         aiAnalysis: {
           predictedDisease: aiResult.predictedDisease,
+          riskLevel: aiResult.riskLevel,
           explanation: aiResult.explanation,
           futureRisks: aiResult.futureRisks,
+          prescription: aiResult.prescription,
           suggestedDoctorType: aiResult.suggestedDoctorType
         },
         createdAt: existingPatient ? existingPatient.createdAt : new Date().toISOString()
