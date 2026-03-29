@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meddy Health Check | Official Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #eef4fb;
+            --accent: #28a745;
+            --danger: #dc3545;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --border: #dee2e6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+            color: var(--text-dark);
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: var(--white);
+            padding: 1.5rem 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        h2 { margin-bottom: 25px; color: var(--primary); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        label { font-weight: 600; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-light); }
+        input, select, textarea {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            background: #fafafa;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.3s;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .btn-primary { background: var(--primary); color: white; width: 100%; margin-top: 10px; }
+        .btn-primary:hover { background: #004494; box-shadow: 0 5px 15px rgba(0,86,179,0.3); }
+        
+        .btn-download { background: var(--accent); color: white; flex: 1; }
+        .btn-cert { background: var(--primary); color: white; flex: 1; }
+
+        /* Results Display */
+        #analysisSection, #subscriptionSection, #certificateSection { display: none; }
+
+        .risk-tag {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .risk-Low { background: #d4edda; color: #155724; }
+        .risk-Moderate { background: #fff3cd; color: #856404; }
+        .risk-High { background: #f8d7da; color: #721c24; }
+
+        /* Pricing */
+        .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .p-card { border: 1px solid var(--border); padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .p-card:hover { border-color: var(--primary); background: var(--secondary); }
+        .p-card h3 { font-size: 1rem; margin-bottom: 10px; }
+        .price { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
+
+        /* Professional Certificate */
+        .certificate-box {
+            border: 15px solid #f0f0f0;
+            padding: 50px;
+            background: white;
+            position: relative;
+            text-align: center;
+            border-image: linear-gradient(to bottom right, #0056b3, #00b3cc) 30;
+        }
+        .cert-title { font-size: 2.2rem; font-weight: 800; color: #1a1a1a; margin-bottom: 10px; }
+        .cert-sub { font-size: 1rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 40px; }
+        .cert-content { font-size: 1.2rem; line-height: 1.8; margin-bottom: 40px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 30px 0; }
+        .cert-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+        .stamp { border: 4px double var(--danger); color: var(--danger); padding: 10px 20px; font-weight: 900; transform: rotate(-10deg); opacity: 0.8; }
+        
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #certificateSection, #certificateSection * { visibility: visible; }
+            #certificateSection { position: absolute; left: 0; top: 0; width: 100%; }
+            .btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">MEDDY HEALTH CHECK</div>
+    <div style="font-size: 0.8rem; font-weight: 600;">REPORT ID: #882-991-LX</div>
+</header>
+
+<div class="container">
+    <!-- 1. PATIENT FORM -->
+    <section id="formSection" class="card">
+        <h2>Clinical Intake Form</h2>
+        <form id="healthForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Patient Full Name</label>
+                    <input type="text" id="name" placeholder="Sarah Jenkins" required>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="age" placeholder="29" required>
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="gender">
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group"><label>Temp (°C)</label><input type="number" step="0.1" id="temp" placeholder="37.1" required></div>
+                <div class="form-group"><label>Oxygen (SpO2 %)</label><input type="number" id="o2" placeholder="98" required></div>
+                <div class="form-group"><label>Heart Rate (BPM)</label><input type="number" id="hr" placeholder="75" required></div>
+                <div class="form-group"><label>Blood Pressure</label><input type="text" id="bp" placeholder="120/80" required></div>
+            </div>
+
+            <div class="form-group">
+                <label>Current Symptoms</label>
+                <textarea id="symptoms" rows="3" placeholder="Describe symptoms..."></textarea>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group"><label>Duration</label><input type="text" id="duration" placeholder="e.g. 3 days"></div>
+                <div class="form-group"><label>Medical History</label><input type="text" id="notes" placeholder="No allergies"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Process Health Analysis</button>
+        </form>
+    </section>
+
+    <!-- 2. ANALYSIS VIEW -->
+    <section id="analysisSection" class="card">
+        <h2>Medical Analysis Results</h2>
+        <div id="resultOutput"></div>
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button onclick="downloadReport()" class="btn btn-download">Download Report (.TXT)</button>
+            <button onclick="showSubscription()" class="btn btn-cert">Get Health Certificate</button>
+        </div>
+    </section>
+
+    <!-- 3. SUBSCRIPTION -->
+    <section id="subscriptionSection" class="card">
+        <h2>Select Certificate Plan</h2>
+        <div class="pricing">
+            <div class="p-card" onclick="genCert(7)">
+                <h3>BASIC</h3>
+                <div class="price">$10</div>
+                <p>7 Days Validity</p>
+            </div>
+            <div class="p-card" onclick="genCert(30)" style="border-color: var(--primary);">
+                <h3>STANDARD</h3>
+                <div class="price">$25</div>
+                <p>30 Days Validity</p>
+            </div>
+            <div class="p-card" onclick="genCert(90)">
+                <h3>PREMIUM</h3>
+                <div class="price">$50</div>
+                <p>90 Days Validity</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. OFFICIAL CERTIFICATE -->
+    <section id="certificateSection">
+        <div class="certificate-box" id="certExport">
+            <div class="cert-title">Health Eligibility Certificate</div>
+            <div class="cert-sub">Meddy Health Check Global Agency</div>
+            
+            <div class="cert-content">
+                This document confirms that <strong><span id="cName"></span></strong>, <span id="cAge"></span> years of age, 
+                has undergone a digital health screening. Based on the vitals provided, the patient is currently 
+                classified as <strong><span id="cRisk"></span> RISK</strong>.
+                <br><br>
+                Status: <span id="cStatus"></span><br>
+                Issued on: <span id="cDate"></span>
+            </div>
+
+            <div class="cert-footer">
+                <div style="text-align: left;">
+                    <small>VALIDITY PERIOD</small><br>
+                    <strong id="cValid"></strong>
+                </div>
+                <div class="stamp">OFFICIALLY VERIFIED</div>
+                <div style="text-align: right;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/Signature_de_Zola.png" width="80"><br>
+                    <small>Director of Health Services</small>
+                </div>
+            </div>
+        </div>
+        <button onclick="window.print()" class="btn btn-primary" style="margin-top:20px;">Save as PDF / Print</button>
+    </section>
+</div>
+
+<script>
+    let data = {};
+    let analysis = {};
+
+    document.getElementById('healthForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        // Data Collection
+        data = {
+            name: document.getElementById('name').value,
+            age: document.getElementById('age').value,
+            gender: document.getElementById('gender').value,
+            temp: document.getElementById('temp').value,
+            o2: document.getElementById('o2').value,
+            hr: document.getElementById('hr').value,
+            bp: document.getElementById('bp').value,
+            symptoms: document.getElementById('symptoms').value,
+            duration: document.getElementById('duration').value,
+            notes: document.getElementById('notes').value
+        };
+
+        // Analysis Logic
+        let risk = "Low";
+        let status = "Stable - Routine observation recommended.";
+        
+        if(data.temp > 38 || data.o2 < 95) {
+            risk = "Moderate";
+            status = "Symptomatic - Medical consultation advised.";
+        }
+        if(data.o2 < 92) {
+            risk = "High";
+            status = "Critical - Immediate clinical intervention required.";
+        }
+
+        analysis = { risk, status };
+
+        // UI Update
+        document.getElementById('resultOutput').innerHTML = `
+            <p><strong>Patient:</strong> ${data.name}</p>
+            <p><strong>Classification:</strong> <span class="risk-tag risk-${risk}">${risk} Risk</span></p>
+            <p><strong>Medical Note:</strong> ${status}</p>
+        `;
+
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('analysisSection').style.display = 'block';
+    };
+
+    function showSubscription() {
+        document.getElementById('analysisSection').style.display = 'none';
+        document.getElementById('subscriptionSection').style.display = 'block';
+    }
+
+    function genCert(days) {
+        document.getElementById('cName').innerText = data.name;
+        document.getElementById('cAge').innerText = data.age;
+        document.getElementById('cRisk').innerText = analysis.risk.toUpperCase();
+        document.getElementById('cStatus').innerText = analysis.status;
+        document.getElementById('cDate').innerText = new Date().toLocaleDateString();
+        document.getElementById('cValid').innerText = days + " DAYS FROM ISSUE";
+
+        document.getElementById('subscriptionSection').style.display = 'none';
+        document.getElementById('certificateSection').style.display = 'block';
+    }
+
+    // UPDATED DOWNLOAD LOGIC
+    function downloadReport() {
+        const timestamp = new Date().toLocaleString();
+        const reportContent = `
+=========================================
+MEDDY HEALTH CHECK - OFFICIAL REPORT
+=========================================
+Issue Date: ${timestamp}
+
+PATIENT INFORMATION:
+Name: ${data.name}
+Age: ${data.age}
+Gender: ${data.gender}
+
+VITALS:
+- Temp: ${data.temp}°C
+- Oxygen: ${data.o2}%
+- Heart Rate: ${data.hr} BPM
+- Blood Pressure: ${data.bp}
+
+ASSESSMENT:
+Symptoms: ${data.symptoms}
+Duration: ${data.duration}
+History: ${data.notes}
+
+DIAGNOSTIC SUMMARY:
+Risk Level: ${analysis.risk}
+Status: ${analysis.status}
+
+-----------------------------------------
+This report is generated electronically.
+=========================================
+        `;
+
+        const filename = `Report_${data.name.replace(/\s+/g, '_')}.txt`;
+        const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+        
+        // Create an invisible link and trigger it
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+</script>
+
+</body>
+</html>

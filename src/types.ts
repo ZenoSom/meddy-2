@@ -1,17 +1,20 @@
 export type PriorityLevel = 'Critical' | 'Urgent' | 'Normal';
 export type Specialist = 'Cardiologist' | 'Pulmonologist' | 'Neurologist' | 'General Physician' | 'Orthopedic';
 
+export interface VitalsEntry {
+  time: string;
+  temp: number;
+  bp: string;
+  o2: number;
+  hr?: number;
+}
+
 export interface Patient {
   id: string;
   name: string;
   age: number;
   gender: string;
-  vitals: {
-    temp: number;
-    bp: string;
-    o2: number;
-    hr?: number;
-  };
+  history: VitalsEntry[];
   symptoms: {
     text: string;
     painArea: string;
@@ -29,6 +32,7 @@ export interface Patient {
   prescriptionUrl?: string;
   priorityScore: number;
   priorityLevel: PriorityLevel;
+  trend: 'up' | 'down' | 'stable';
   aiAnalysis: {
     predictedDisease: string;
     explanation: string;

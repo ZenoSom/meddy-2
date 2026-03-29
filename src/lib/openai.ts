@@ -1,10 +1,3 @@
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // This is needed for Client-side Vite environment
-});
-
 export interface AIAnalysis {
   predictedDisease: string;
   riskLevel: 'Critical' | 'Urgent' | 'Normal';
@@ -14,13 +7,16 @@ export interface AIAnalysis {
   prescription: string;
 }
 
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const API_URL = `${window.location.origin}/gemini-api/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
 export async function analyzePatient(patientData: any): Promise<AIAnalysis> {
   const prompt = `
     Analyze the following patient data for hospital triage:
     Name: ${patientData.name}
     Age: ${patientData.age}
     Gender: ${patientData.gender}
-    Vitals: Temp ${patientData.vitals.temp}°C, BP ${patientData.vitals.bp}, O2 ${patientData.vitals.o2}%, HR ${patientData.vitals.hr || 'N/A'}
+    Vitals: Temp ${patientData.vitals.temp}°F, BP ${patientData.vitals.bp}, O2 ${patientData.vitals.o2}%, HR ${patientData.vitals.hr || 'N/A'}
     Symptoms: ${patientData.symptoms.text}
     Pain Area: ${patientData.symptoms.painArea}, Level: ${patientData.symptoms.painLevel}/10
     Duration: ${patientData.symptoms.duration}
@@ -34,19 +30,25 @@ export async function analyzePatient(patientData: any): Promise<AIAnalysis> {
     - explanation: A brief explanation of the condition.
     - futureRisks: A list of potential future health risks.
     - prescription: A detailed clinical plan, recommended initial medications (to be verified), and immediate care steps.
+    
+    RESPONSE FORMAT: Return ONLY a valid JSON object.
   `;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      response_format: { type: "json_object" }
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json" }
+      })
     });
 
-    const result = JSON.parse(response.choices[0].message.content || '{}');
-    return result as AIAnalysis;
+    const body = await response.json();
+    const resultText = body.candidates[0].content.parts[0].text;
+    return JSON.parse(resultText) as AIAnalysis;
   } catch (error) {
-    console.error("OpenAI Analysis failed:", error);
+    console.error("Gemini Analysis failed:", error);
     return {
       predictedDisease: "Pending Evaluation",
       riskLevel: "Normal",
@@ -81,23 +83,27 @@ export async function chatWithAssistant(message: string, patients: any[]): Promi
   `;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemInstruction },
-        { role: "user", content: message }
-      ]
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          { role: "user", parts: [{ text: `SYSTEM_INSTRUCTION: ${systemInstruction}` }] },
+          { role: "user", parts: [{ text: message }] }
+        ]
+      })
     });
 
-    return response.choices[0].message.content || "I'm sorry, I couldn't process that request.";
+    const body = await response.json();
+    return body.candidates[0].content.parts[0].text || "I'm sorry, I couldn't process that request.";
   } catch (error) {
-    console.error("OpenAI Chat failed:", error);
-    return "The GPT connection is having trouble right now. Please verify your API key.";
+    console.error("Gemini Chat failed:", error);
+    return "The Gemini connection is having trouble right now. Please verify your API key.";
   }
 }
 
 export async function parsePatientFile(text: string): Promise<any> {
-  const prompt = `
+    const prompt = `
     Extract patient information from the following text and return it as a structured JSON object. 
     Text content: "${text}"
 
@@ -107,7 +113,7 @@ export async function parsePatientFile(text: string): Promise<any> {
       "age": "Number",
       "gender": "Male" | "Female" | "Other",
       "vitals": {
-        "temp": "Number (e.g. 37.5)",
+        "temp": "Number (e.g. 98.6)",
         "bp": "String (e.g. 120/80)",
         "o2": "Number",
         "hr": "Number"
@@ -133,18 +139,24 @@ export async function parsePatientFile(text: string): Promise<any> {
     - Ensure Age, Temp, O2, HR are returned as numbers.
     - If 'Oxygen' or 'SpO2' is mentioned, extract it into 'o2'.
     - If 'Temperature' is mentioned, extract it into 'temp'.
+    RESPONSE FORMAT: Return ONLY a valid JSON object.
   `;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      response_format: { type: "json_object" }
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: "application/json" }
+      })
     });
 
-    return JSON.parse(response.choices[0].message.content || '{}');
+    const body = await response.json();
+    const resultText = body.candidates[0].content.parts[0].text;
+    return JSON.parse(resultText);
   } catch (error) {
-    console.error("OpenAI Extraction failed:", error);
+    console.error("Gemini Extraction failed:", error);
     return null;
   }
 }

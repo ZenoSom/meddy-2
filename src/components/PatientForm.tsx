@@ -6,11 +6,12 @@ import { parsePatientFileManually } from '../lib/parser';
 import { Patient } from '../types';
 
 interface PatientFormProps {
+  patients: Patient[];
   onPatientAdded: (patient: Patient) => void;
   onAnalysisComplete: (analysis: AIAnalysis, name: string, vitals: any) => void;
 }
 
-export default function PatientForm({ onPatientAdded, onAnalysisComplete }: PatientFormProps) {
+export default function PatientForm({ patients, onPatientAdded, onAnalysisComplete }: PatientFormProps) {
   const [loading, setLoading] = useState(false);
   const [parsingFile, setParsingFile] = useState(false);
   const [formData, setFormData] = useState({
@@ -68,32 +69,47 @@ export default function PatientForm({ onPatientAdded, onAnalysisComplete }: Pati
   const processData = async (data: typeof formData) => {
     setLoading(true);
     try {
-      const { score, level } = calculateSeverity(data);
+      // Find matching patient by Name, Age, Gender
+      const existingPatient = patients.find(
+        p => p.name.toLowerCase() === data.name.toLowerCase() && 
+             p.age === parseInt(data.age) && 
+             p.gender === data.gender
+      );
+
+      const prevHistory = existingPatient ? existingPatient.history : [];
+      
+      const currentVitalsEntry = {
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        temp: parseFloat(data.vitals.temp) || 0,
+        bp: data.vitals.bp,
+        o2: parseInt(data.vitals.o2) || 0,
+        hr: data.vitals.hr ? parseInt(data.vitals.hr) : undefined
+      };
+
+      const newHistory = [...prevHistory, currentVitalsEntry];
+
+      const { score, level, trend } = calculateSeverity(data, newHistory);
       const aiResult = await analyzePatient(data);
 
       const newPatient: Patient = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: existingPatient ? existingPatient.id : Math.random().toString(36).substr(2, 9),
         name: data.name,
         age: parseInt(data.age) || 0,
         gender: data.gender,
-        vitals: {
-          temp: parseFloat(data.vitals.temp) || 0,
-          bp: data.vitals.bp,
-          o2: parseInt(data.vitals.o2) || 0,
-          hr: data.vitals.hr ? parseInt(data.vitals.hr) : undefined
-        },
+        history: newHistory,
         symptoms: data.symptoms,
         risks: data.risks,
         notes: data.notes,
         priorityScore: score,
         priorityLevel: level,
+        trend: trend,
         aiAnalysis: {
           predictedDisease: aiResult.predictedDisease,
           explanation: aiResult.explanation,
           futureRisks: aiResult.futureRisks,
           suggestedDoctorType: aiResult.suggestedDoctorType
         },
-        createdAt: new Date().toISOString()
+        createdAt: existingPatient ? existingPatient.createdAt : new Date().toISOString()
       };
 
       onPatientAdded(newPatient);
@@ -126,19 +142,13 @@ export default function PatientForm({ onPatientAdded, onAnalysisComplete }: Pati
     <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-lg mb-8">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
-          <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-100">
-            <Activity className="text-white w-6 h-6" />
-          </div>
+          <img src="/logo.png" alt="Portal Logo" className="w-10 h-10 rounded-xl shadow-md ring-1 ring-black/5 object-cover" />
           <div>
             <h2 className="text-2xl font-black text-slate-800 tracking-tight">Patient Intake Portal</h2>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Real-time AI Triage & Analysis</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-widest">
-          <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500" /> Basic Info</span>
-          <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500" /> Vitals</span>
-          <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500" /> Symptoms</span>
-        </div>
+
       </div>
 
       {/* Quick Upload Indicator */}
@@ -210,7 +220,7 @@ export default function PatientForm({ onPatientAdded, onAnalysisComplete }: Pati
               <div className="flex items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <Thermometer className="w-4 h-4 text-orange-500" />
                 <input
-                  placeholder="Temp (°C)"
+                  placeholder="Temp (°F)"
                   className="bg-transparent outline-none text-sm w-full font-medium"
                   value={formData.vitals.temp}
                   onChange={e => setFormData({ ...formData, vitals: { ...formData.vitals, temp: e.target.value } })}
@@ -285,26 +295,7 @@ export default function PatientForm({ onPatientAdded, onAnalysisComplete }: Pati
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Risk Factors</h3>
-              <div className="flex flex-wrap gap-3">
-                {['diabetes', 'highBP', 'heartHistory'].map((risk) => (
-                  <label key={risk} className="flex items-center gap-2 text-xs font-bold text-slate-600 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-100 transition-all">
-                    <input
-                      type="checkbox"
-                      className="w-3 h-3 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                      checked={(formData.risks as any)[risk]}
-                      onChange={e => setFormData({ ...formData, risks: { ...formData.risks, [risk]: e.target.checked } })}
-                    />
-                    {risk === 'highBP' ? 'High BP' : risk === 'heartHistory' ? 'Heart History' : 'Diabetes'}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-4">
-            </div>
-          </div>
+
         </div>
 
         {/* Action Section */}

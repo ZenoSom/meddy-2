@@ -1,14 +1,15 @@
 import React from 'react';
 import { Patient } from '../types';
-import { AlertTriangle, Clock, CheckCircle, ChevronRight, Trash2 } from 'lucide-react';
+import { AlertTriangle, Clock, CheckCircle, ChevronRight, Trash2, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface GlobalRankingProps {
   patients: Patient[];
   onDeletePatient: (id: string) => void;
+  onViewDetails: (id: string) => void;
 }
 
-export default function GlobalRanking({ patients, onDeletePatient }: GlobalRankingProps) {
+export default function GlobalRanking({ patients, onDeletePatient, onViewDetails }: GlobalRankingProps) {
   const sortedPatients = [...patients].sort((a, b) => b.priorityScore - a.priorityScore);
 
   return (
@@ -28,6 +29,7 @@ export default function GlobalRanking({ patients, onDeletePatient }: GlobalRanki
           sortedPatients.map((patient, index) => (
             <div
               key={patient.id}
+              onClick={() => onViewDetails(patient.id)}
               className={cn(
                 "p-4 rounded-xl border transition-all hover:shadow-md cursor-pointer group relative",
                 patient.priorityLevel === 'Critical' ? "bg-red-50 border-red-100" :
@@ -71,6 +73,29 @@ export default function GlobalRanking({ patients, onDeletePatient }: GlobalRanki
                 </div>
               </div>
 
+              <div className="bg-white/40 p-3 rounded-lg border border-white/20 mb-3 space-y-1">
+                <div className="flex items-center justify-between">
+                   <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Priority Trend</p>
+                   <div className="flex items-center gap-1 font-bold text-xs">
+                     {patient.trend === 'up' && <span className="flex items-center text-red-500"><ArrowUpRight className="w-4 h-4" /> Increasing Risk</span>}
+                     {patient.trend === 'down' && <span className="flex items-center text-emerald-500"><ArrowDownRight className="w-4 h-4" /> Decreasing Risk</span>}
+                     {patient.trend === 'stable' && <span className="flex items-center text-blue-500"><Minus className="w-4 h-4" /> Stable</span>}
+                   </div>
+                </div>
+                
+                <div className="text-[10px] space-y-1 mt-2">
+                  <p className="font-bold text-slate-400 uppercase tracking-widest">History Timeline (BP)</p>
+                  <div className="flex items-center gap-3 overflow-x-auto pb-1 custom-scrollbar">
+                    {patient.history.map((h, i) => (
+                      <div key={i} className="flex flex-col items-center bg-white/60 px-2 py-1 rounded border border-slate-100 min-w-max">
+                        <span className="font-bold text-slate-700">{h.bp}</span>
+                        <span className="text-[8px] text-slate-400">{h.time}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-2 mb-3">
                 <div className="bg-white/50 p-2 rounded-lg border border-white/20">
                   <p className="text-[10px] text-slate-400 uppercase font-semibold">Predicted Disease</p>
@@ -87,9 +112,15 @@ export default function GlobalRanking({ patients, onDeletePatient }: GlobalRanki
                   <AlertTriangle className="w-3 h-3" />
                   Score: {patient.priorityScore}
                 </div>
-                <div className="flex items-center gap-1 text-blue-600 text-[10px] font-bold group-hover:translate-x-1 transition-transform">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onViewDetails(patient.id);
+                  }}
+                  className="flex items-center gap-1 text-blue-600 text-[10px] font-bold group-hover:translate-x-1 transition-transform"
+                >
                   View Details <ChevronRight className="w-3 h-3" />
-                </div>
+                </button>
               </div>
             </div>
           ))

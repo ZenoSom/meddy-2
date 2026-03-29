@@ -34,7 +34,7 @@ export function parsePatientFileManually(text: string): ParsedPatientData {
   result.age = extract('Age').replace(/\D/g, ''); // Extract only numbers
 
   // Vitals extraction (handling different formats)
-  result.vitals.temp = extract('Temperature').replace(/[^\d.]/g, ''); // e.g. "37.5°C" -> "37.5"
+  result.vitals.temp = extract('Temperature').replace(/[^\d.]/g, ''); // e.g. "98.6°F" -> "98.6"
   result.vitals.o2 = extract('Oxygen Level \\(SpO2\\)').replace(/\D/g, '') || extract('Oxygen').replace(/\D/g, '') || extract('SpO2').replace(/\D/g, '');
   result.vitals.hr = extract('Heart Rate').replace(/\D/g, '') || extract('Pulse').replace(/\D/g, '');
   result.vitals.bp = extract('Blood Pressure');

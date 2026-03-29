@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", "Outfit", "system-ui", "sans-serif";
+  --font-sans: "Outfit", "Inter", "system-ui", "sans-serif";
   --font-serif: "Crimson Pro", "Georgia", "serif";
 }
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900;
+    @apply bg-slate-50 text-slate-900 font-medium tracking-tight;
   }
 }
 
