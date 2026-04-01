@@ -1,20 +1,147 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🏥 Meddy AI: Project Overview & Architecture
 
-# Run and deploy your AI Studio app
+We built an AI-based hospital management patient prioritization system, gaining valuable experience in innovation, teamwork, and problem-solving.
 
-This contains everything you need to run your app locally.
+**Meddy AI** is a state-of-the-art **Neural Triage System** designed to streamline medical intake processes using Artificial Intelligence. It transforms raw patient data (vitals, symptoms, and medical history) into actionable clinical insights, prioritizing patients based on urgency and ensuring they are seen by the right specialist.
 
-View your app in AI Studio: https://ai.studio/apps/bb9aff31-c96f-4c47-89fe-0f0ff5733948
+---
 
-## Run Locally
+## 🚀 Core Features
 
-**Prerequisites:**  Node.js
+### 🧠 AI-Powered Triage
+- Uses Gemini/OpenAI models  
+- Analyzes symptoms and predicts:
+  - Potential diseases  
+  - Risk levels (Critical, Urgent, Normal)  
+  - Initial prescription suggestions  
+
+---
+
+### 📊 Dynamic Neural Ranking
+- Global Ranking system for patients  
+- Scores based on:
+  - Blood Pressure (BP)  
+  - Oxygen Level (O2)  
+  - Heart Rate (HR)  
+  - AI analysis  
+- Ensures critical patients are prioritized  
+
+---
+
+### 🩺 Specialist Routing
+- Automatically assigns doctors based on symptoms:
+  - Cardiologist → Chest pain  
+  - Neurologist → Stiff neck  
+- Improves efficiency and reduces manual sorting  
+
+---
+
+### 📈 Real-time Vitals Monitoring
+- Tracks patient vitals history  
+- Visualizes trends:
+  - Stable  
+  - Deteriorating  
+
+---
+
+### 🎨 Glassmorphic UI
+- macOS-inspired design  
+- Features:
+  - Blur effects  
+  - Smooth animations  
+  - Premium interface  
+
+---
+
+### 💬 Staff Assistant
+- Chat interface for clinical staff  
+- Allows:
+  - Patient queries  
+  - System-wide insights  
+
+---
+
+## 🛠️ Technical Stack
+
+| Category            | Technology                          |
+|--------------------|-----------------------------------|
+| Frontend Framework | React 19, TypeScript              |
+| Build Tool         | Vite 6                            |
+| Styling            | Tailwind CSS 4, Lucide Icons      |
+| Animations         | Framer Motion                     |
+| AI Integration     | Google Gemini API, OpenAI SDK     |
+| Database/Auth      | Supabase                          |
+| Persistence        | LocalStorage                      |
+
+---
+
+## 📁 Technical Structure
+
+### `/src/components/`
+- **PatientForm.tsx** → Patient data intake  
+- **AISuggestionBox.tsx** → AI diagnostic results UI  
+- **GlobalRanking.tsx** → Patient priority dashboard  
+- **DoctorQueues.tsx** → Specialist-wise queue management  
+- **ChatBox.tsx** → Staff assistant  
+
+---
+
+### `/src/lib/`
+- **openai.ts** → AI request handling  
+- **parser.ts** → Converts AI responses into structured data  
+- **utils.ts** → UI helper functions  
+
+---
+
+### ⚙️ Root Configuration
+- **supabase_schema.sql** → Database structure  
+- **vite.config.ts** → Build optimization  
+
+---
+
+## 🚦 Getting Started
+
+### 🔑 Environment Setup
+Create `.env.local`:
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+
+---
+
+### 📦 Installation
+
+
+
+---
+
+### ▶️ Run Development Server
+
+
+➡️ Runs on: `http://localhost:3000`
+
+---
+
+### 🧪 Demo Mode
+- Uses `MOCK_PATIENTS` dataset  
+- Fully ready for real-time data integration via **PatientForm**
+
+---
+
+## 🙏 Acknowledgements
+
+Grateful to the judges, mentors, and the HackShastra team for their valuable guidance and support.
+
+Special thanks to:
+- Uday Sharma Sir  
+- Md Imran Sir  
+
+---
+
+## 👨‍💻 Team
+
+- Somnath Singh (IIT Jodhpur, Rajasthan)  
+- Kartik Karnwal (@SRGC)  
+- Nitin Kumar (SRGC)  
+- Garuv Kumar  
+
+---
