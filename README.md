@@ -139,9 +139,7 @@ Special thanks to:
 
 ## 👨‍💻 Team
 
-- Somnath Singh (IIT Jodhpur, Rajasthan)  
-- Kartik Karnwal (@SRGC)  
-- Nitin Kumar (SRGC)  
-- Garuv Kumar  
+- Somnath Singh (IIT Jodhpur, Rajasthan)  |  Kartik Karnwal (SRGC)  |  Garuv Kumar (SRGC) |  Nitin Kumar (SRGC)
+ 
 
 ---
