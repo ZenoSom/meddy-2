@@ -129,12 +129,22 @@ Create `.env.local`:
 
 ## 🙏 Acknowledgements
 
-Grateful to the judges, mentors, and the HackShastra team for their valuable guidance and support.
+# 🛡️ HackShastra
 
-Special thanks to:
-- Uday Sharma Sir  
-- Md Imran Sir  
+**HackShastra** is India's first creator-led tech community and student collective focused on bridging the gap between academic theory and real-world architectural innovation.
 
+---
+
+## 🔗 Project & Community Links
+
+* **Official Website:** [hackshastra.in](https://www.hackshastra.in/)
+* **SRM-AP Chapter:** [hackshastrasrmuap.dev](https://www.hackshastrasrmuap.dev/)
+
+---
+
+## 👥 Community Leadership
+* ** Uday Sharma
+* ** Md Imran
 ---
 
 ## 👨‍💻 Team
